@@ -1,0 +1,45 @@
+{
+    "family": "task-hhplus-nest-prod",
+    "containerDefinitions": [
+        {
+            "name": "service-prod",
+            "image": "200073956152.dkr.ecr.ap-northeast-2.amazonaws.com/hhplus-prod:prod-21930bcda147841b02625390f059504893441a11",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/task-hhplus-nest-prod",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::200073956152:role/role-ecs-tasks",
+    "executionRoleArn": "arn:aws:iam::200073956152:role/role-ecs-tasks",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

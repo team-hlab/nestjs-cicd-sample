@@ -78,6 +78,6 @@ jobs:
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
                 task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
-                service: service-hhplus-nestjs-prod
-                cluster: HHPlus-nest-prod
+                service: hhplus-nestjs-prod
+                cluster: cluster-hhplust-nest-prod
                 wait-for-service-stability: true
