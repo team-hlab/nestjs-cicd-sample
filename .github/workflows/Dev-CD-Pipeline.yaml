@@ -8,7 +8,7 @@ on:
 env:
     AWS_REGION: ap-northeast-2
     ECR_REGISTRY: 200073956152.dkr.ecr.ap-northeast-2.amazonaws.com/hhplus-dev
-    ECR_REPOSITORY: hhplus
+    ECR_REPOSITORY: hhplus-dev
 
 jobs:
   test: 
