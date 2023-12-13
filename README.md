@@ -4,6 +4,6 @@ For HangeHae-Plus students, nestjs project ci / cd example with github actions.
 
 ### ROADMAP
 - [x] CI Piepeline
-- [ ] CD Piepeline
+- [x] CD Piepeline
 - [ ] Pipeline Alert with Github / Slack
 - [ ] Logging configurations for CloudWatch
