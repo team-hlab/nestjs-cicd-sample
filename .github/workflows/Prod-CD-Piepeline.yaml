@@ -39,6 +39,7 @@ jobs:
           run: pnpm run test
     
     prod-cd:
+        needs: test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -65,3 +66,18 @@ jobs:
                 docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
                 echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
             
+            - name: Render ECS task-definition
+              id: render-task-definition
+              uses: aws-actions/amazon-ecs-render-task-definition@v1
+              with:
+                task-definition: .taskdefinition/prod-task-definition.json
+                container-name: hhplus-nest-prod
+                image: ${{ steps.build-image.outputs.image }}
+            
+            - name: Deploy Amazon ECS task-definition
+              uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+              with:
+                task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+                service: service-hhplus-nestjs-prod
+                cluster: HHPlus-nest-prod
+                wait-for-service-stability: true
