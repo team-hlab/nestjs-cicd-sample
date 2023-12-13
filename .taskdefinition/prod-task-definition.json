@@ -1,5 +1,5 @@
 {
-    "family": "task-hhplus-nest-prod",
+    "family": "hhplus-nest-prod",
     "containerDefinitions": [
         {
             "name": "service-prod",
