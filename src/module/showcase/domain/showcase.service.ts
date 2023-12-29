@@ -1,17 +1,17 @@
-import { Injectable } from "@nestjs/common";
-import Logger from "src/support/logger/logger";
+import { Injectable } from '@nestjs/common';
+import Logger from 'src/support/logger/logger';
 
 @Injectable()
 export class ShowcaseService {
-    private logger
+  private logger;
 
-    constructor() {
-        this.logger = new Logger('ShowcaseService')
-    }
-    
-    async simulateSlowQuery() {
-        setTimeout(() => {
-            this.logger.error('Showcase service timeout!')
-        }, 500)
-    }
+  constructor() {
+    this.logger = new Logger('ShowcaseService');
+  }
+
+  async simulateSlowQuery() {
+    setTimeout(() => {
+      this.logger.error('Showcase service timeout!');
+    }, 500);
+  }
 }

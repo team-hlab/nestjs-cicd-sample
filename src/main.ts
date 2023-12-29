@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // timezone to KST
-  moment.tz.setDefault('Asia/Seoul')
+  moment.tz.setDefault('Asia/Seoul');
 
   await app.listen(3000);
 }
