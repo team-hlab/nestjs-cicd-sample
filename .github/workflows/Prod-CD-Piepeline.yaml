@@ -44,7 +44,7 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v3
-
+              
             - name: Create prod environments
               run: |
                 echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env.production
