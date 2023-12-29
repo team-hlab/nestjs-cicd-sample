@@ -24,6 +24,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(HttpLoggerMiddleware)
+      .exclude('/')
       .exclude('/health')
       .forRoutes({ path: '*', method: RequestMethod.ALL })
   }
