@@ -9,6 +9,14 @@ type CloudwatchConfig = {
   stream_info: string;
 };
 
+export type CloudwatchLogPayload = {
+  timestamp: string,
+  level: string,
+  category: string,
+  message: any,
+  metadata: string,
+}
+
 export class CloudwatchLoggerAddon {
   private cloudWatchClient: CloudWatchLogsClient;
   private cloudwatchConfig: CloudwatchConfig;
@@ -16,7 +24,7 @@ export class CloudwatchLoggerAddon {
   constructor() {
     this.cloudWatchClient = new CloudWatchLogsClient({
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
       region: process.env.CLOUDWATCH_REGION,
@@ -28,7 +36,7 @@ export class CloudwatchLoggerAddon {
     };
   }
 
-  public sendInfo(payload: any) {
+  public sendInfo(payload: CloudwatchLogPayload) {
     this.sendCloudWatch(
       this.cloudwatchConfig.groupName,
       this.cloudwatchConfig.stream_info,
@@ -36,7 +44,7 @@ export class CloudwatchLoggerAddon {
     );
   }
 
-  public sendError(payload: any) {
+  public sendError(payload: CloudwatchLogPayload) {
     this.sendCloudWatch(
       this.cloudwatchConfig.groupName,
       this.cloudwatchConfig.stream_error,
@@ -44,7 +52,7 @@ export class CloudwatchLoggerAddon {
     );
   }
 
-  private sendCloudWatch(group: string, stream: string, payload: any) {
+  private sendCloudWatch(group: string, stream: string, payload: CloudwatchLogPayload) {
     const logEvents = [
       {
         timestamp: new Date().getTime(),

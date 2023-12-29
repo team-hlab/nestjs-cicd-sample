@@ -3,7 +3,7 @@ import Logger from 'src/support/logger/logger';
 
 @Injectable()
 export class ShowcaseService {
-  private logger;
+  private logger: Logger;
 
   constructor() {
     this.logger = new Logger('ShowcaseService');

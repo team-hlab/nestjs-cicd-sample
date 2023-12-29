@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './support/health/health.module';
 import { ShowcaseModule } from './module/showcase/showcase.module';
+import { HttpLoggerMiddleware } from './middleware/http.logger.middleware';
 
 @Module({
   imports: [
@@ -18,4 +19,12 @@ import { ShowcaseModule } from './module/showcase/showcase.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(HttpLoggerMiddleware)
+      .exclude('/health')
+      .forRoutes({ path: '*', method: RequestMethod.ALL })
+  }
+}

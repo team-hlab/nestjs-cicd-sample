@@ -63,7 +63,7 @@ export default class Logger {
       const info = {
         timestamp: this.now,
         level: 'info',
-        subject: this.subject,
+        category: this.subject,
         message: msg,
         metadata: metadata,
       };
@@ -89,7 +89,7 @@ export default class Logger {
       const message = {
         timestamp: this.now,
         level: 'error',
-        subject: this.subject,
+        category: this.subject,
         message: errMsg,
         metadata: metadata,
       };
@@ -104,7 +104,7 @@ export default class Logger {
       const message = {
         timestamp: this.now,
         level: 'debug',
-        subject: this.subject,
+        category: this.subject,
         message: warnMsg,
         metadata: metadata,
       };
