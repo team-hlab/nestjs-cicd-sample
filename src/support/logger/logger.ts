@@ -1,6 +1,6 @@
 import * as winston from 'winston';
 import * as process from 'process';
-import moment from 'moment-timezone';
+import * as moment from 'moment-timezone';
 import { CloudwatchLoggerAddon } from './logger.addon.cloudwatch';
 
 const { createLogger, transports } = winston;
