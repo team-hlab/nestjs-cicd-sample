@@ -57,6 +57,7 @@ RUN corepack enable && corepack prepare pnpm@8.12.0 --activate
 ENV NODE_ENV production
 
 # Copy only the necessary files
+COPY --chown=node:node --from=build /app/.env.production .env.production
 COPY --chown=node:node --from=build /app/dist ./dist
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 
