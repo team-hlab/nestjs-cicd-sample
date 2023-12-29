@@ -88,5 +88,5 @@ jobs:
               with:
                 task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
                 service: hhplus-nestjs-prod
-                cluster: cluster-hhplust-nest-prod
+                cluster: cluster-hhplus-nest-prod
                 wait-for-service-stability: true
