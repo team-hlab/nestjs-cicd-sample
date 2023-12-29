@@ -1,134 +1,106 @@
 import winston from 'winston';
-import {
-  CloudWatchLogsClient,
-  PutLogEventsCommand,
-} from '@aws-sdk/client-cloudwatch-logs';
 import * as process from 'process';
 import moment from 'moment-timezone';
+import { CloudwatchLoggerAddon } from './logger.addon.cloudwatch';
 
 const { createLogger, transports } = winston;
 const { combine, timestamp, colorize, printf, errors } = winston.format;
 
 export default class Logger {
   private logger: winston.Logger;
-  private cloudWatchClient: CloudWatchLogsClient;
-  LogGroupName: string;
-  LogStreamName: string;
+  private cloudwatchAddon: CloudwatchLoggerAddon
   private is_production = process.env.NODE_ENV === 'production';
   protected now : string;
 
-  constructor(private readonly category: string) {
+  constructor(private readonly subject: string) {
     // send to cloudWatch
     this.logger = createLogger({ level: this.is_production ? 'info' : 'silly' })
 
     // cloudWatch log setup
     if (this.is_production) {
-      this.cloudWatchClient = new CloudWatchLogsClient({
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        },
-        region: process.env.CLOUDWATCH_REGION,
-      });
-      this.LogGroupName = process.env.CLOUDWATCH_GROUP_NAME;
-      this.LogStreamName = process.env.CLOUDWATCH_STREAM_NAME;
+        this.cloudwatchAddon = new CloudwatchLoggerAddon()
 
-      this.logger.add(
-        new transports.Console({
-          format: combine(
-            colorize(),
-            timestamp({
-              format: 'YYYY-MM-DD HH:mm:ss',
+        this.logger.add(
+            new transports.Console({
+                format: combine(
+                    colorize(),
+                    timestamp({
+                        format: 'YYYY-MM-DD HH:mm:ss',
+                    }),
+                    printf((info) => {
+                        return `[${info.timestamp}] [${process.env.NODE_ENV}] [${info.level}] [${this.subject}] : ${info.message}`;
+                    }),
+                ),
             }),
-            printf((info) => {
-              return `[${info.timestamp}] [${process.env.NODE_ENV}] [${info.level}] [${this.category}] : ${info.message}`;
-            }),
-          ),
-        }),
-      );
+        )
     } else {
-      this.logger.add(
-        new transports.Console({
-          format: combine(
-            colorize(),
-            timestamp({
-              format: 'YYYY-MM-DD HH:mm:ss',
+        this.logger.add(
+            new transports.Console({
+                format: combine(
+                    colorize(),
+                    timestamp({
+                        format: 'YYYY-MM-DD HH:mm:ss',
+                    }),
+                    printf((info) => {
+                        return `[${info.timestamp}] [${info.level}] [${this.subject}] : ${info.message}`;
+                    }),
+                ),
             }),
-            printf((info) => {
-              return `[${info.timestamp}] [${info.level}] [${this.category}] : ${info.message}`;
-            }),
-          ),
-        }),
-      );
+        )
     }
   }
 
+  public debug(debugMsg: string, metadata = '') {
+    this.logger.debug(debugMsg)
+  }
+
   public info(msg: string, metadata = '') {
-    this.now = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.logger.info(msg + ' - ' + metadata);
+    this.now = moment().format('YYYY-MM-DD HH:mm:ss')
+    this.logger.info(msg + ' - ' + metadata)
     if (this.is_production) {
       const info = {
         timestamp: this.now,
         level: 'info',
-        category: this.category,
+        subject: this.subject,
         message: msg,
         metadata: metadata,
-      };
-      this.sendToCloudWatch(info);
+      }
+      this.cloudwatchAddon.sendInfo(info)
     }
   }
 
   public error(errMsg: Error | string, metadata = '') {
     this.now = moment().format('YYYY-MM-DD HH:mm:ss');
     if (errMsg instanceof Error) {
-      const err = errMsg.stack ? errMsg.stack : errMsg.message;
-      this.logger.error(err + '\n======================================\nmetadata: ' + metadata); // this will now log the error stack trace
+      const err = errMsg.stack ? errMsg.stack : errMsg.message
+      this.logger.error(err + '\n======================================\nmetadata: ' + metadata) // this will now log the error stack trace
     } else {
-      this.logger.error(errMsg + '\n======================================\nmetadata: ' + metadata);
+      this.logger.error(errMsg + '\n======================================\nmetadata: ' + metadata)
     }
     if (this.is_production) {
-      const info = {
+      const message = {
         timestamp: this.now,
         level: 'error',
-        category: this.category,
+        subject: this.subject,
         message: errMsg,
         metadata: metadata,
-      };
-      this.sendToCloudWatch(info);
-    }
-  }
-  public debug(debugMsg: string, metadata = '') {
-    this.logger.debug(debugMsg);
-  }
-  public warn(warnMsg: string, metadata = '') {
-    this.now = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.logger.warn(warnMsg);
-    if (this.is_production) {
-      const info = {
-        timestamp: this.now,
-        level: 'debug',
-        category: this.category,
-        message: warnMsg,
-        metadata: metadata,
-      };
-      this.sendToCloudWatch(info);
+      }
+      this.cloudwatchAddon.sendError(message)
     }
   }
 
-  private sendToCloudWatch(payload) {
-    const logEvents = [
-      {
-        timestamp: new Date().getTime(),
-        message: `[${payload.timestamp}] [${payload.level}] [${payload.category}] ${
-            payload.metadata !== '' ? '- ' + payload.metadata : ''
-        } : ${payload.message}`,
-      },
-    ];
-    const command = new PutLogEventsCommand({
-      logGroupName: this.LogGroupName,
-      logStreamName: this.LogStreamName,
-      logEvents,
-    });
-    this.cloudWatchClient.send(command);
+  public warn(warnMsg: string, metadata = '') {
+    this.now = moment().format('YYYY-MM-DD HH:mm:ss')
+    this.logger.warn(warnMsg)
+    if (this.is_production) {
+      const message = {
+        timestamp: this.now,
+        level: 'debug',
+        subject: this.subject,
+        message: warnMsg,
+        metadata: metadata,
+      }
+      this.cloudwatchAddon.sendError(message)
+    }
   }
 }
