@@ -28,7 +28,6 @@ export class HttpLoggerMiddleware implements NestMiddleware {
 
             res.send = responseHandler
             res.send(responseBody)
-
             this.logger.info(
                 `HttpResponse [status: ${statusCode}]\n` +
                 `Body: {` +
