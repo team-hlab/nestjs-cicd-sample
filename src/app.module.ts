@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { HealthModule } from './support/health/health.module';
@@ -18,12 +23,11 @@ import { HttpLoggerMiddleware } from './middleware/http.logger.middleware';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(HttpLoggerMiddleware)
       .exclude('/')
       .exclude('/health')
-      .forRoutes({ path: '*', method: RequestMethod.ALL })
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

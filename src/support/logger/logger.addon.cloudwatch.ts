@@ -10,12 +10,12 @@ type CloudwatchConfig = {
 };
 
 export type CloudwatchLogPayload = {
-  timestamp: string,
-  level: string,
-  category: string,
-  message: any,
-  metadata: string,
-}
+  timestamp: string;
+  level: string;
+  category: string;
+  message: any;
+  metadata: string;
+};
 
 export class CloudwatchLoggerAddon {
   private cloudWatchClient: CloudWatchLogsClient;
@@ -52,7 +52,11 @@ export class CloudwatchLoggerAddon {
     );
   }
 
-  private sendCloudWatch(group: string, stream: string, payload: CloudwatchLogPayload) {
+  private sendCloudWatch(
+    group: string,
+    stream: string,
+    payload: CloudwatchLogPayload,
+  ) {
     const logEvents = [
       {
         timestamp: new Date().getTime(),
